@@ -1,0 +1,100 @@
+{
+  "entity": {
+    "sensor": {
+      "next_delivery": {
+        "name": "Nächste Lieferung"
+      }
+    },
+    "calendar": {
+      "deliveries": {
+        "name": "DHL Lieferungen"
+      }
+    }
+  },
+  "config": {
+    "step": {
+      "user": {
+        "title": "DHL Sendungsverfolgung",
+        "description": "Richte die DHL Paketverfolgung ein. Eine Kontoanmeldung ist vollkommen optional — du kannst Pakete ohne Konto direkt über deine Sendungsnummern tracken.",
+        "data": {
+          "account_mode": "DHL Kundenkonto-Verbindung (Optional)",
+          "refresh_token": "Cookie-Wert (`dhlr0` aus dhl.de Cookies)",
+          "auth_code": "Autorisierungscode (optional)",
+          "tracking_numbers": "Sendungsnummern (optional bei verbundenem Konto)",
+          "api_key": "DHL Developer API Key (optional)",
+          "recipient_postal_code": "Empfänger-Postleitzahl (optional)",
+          "update_interval": "Aktualisierungsintervall in Minuten (Standard: 30)"
+        }
+      },
+      "account_token": {
+        "title": "DHL Kundenkonto — Session / Refresh Token (Empfohlen)",
+        "description": "Gib deinen DHL Session- oder Refresh-Token (`dhlr0` oder `dhla0`) ein.\n\nSo ermittelst du deinen Token:\n1. Melde dich im Browser in deinem DHL Kundenkonto auf dhl.de an.\n2. Öffne die Entwicklertools (F12) > Anwendung (Application) > Speicher (Storage) > Cookies > `https://www.dhl.de`.\n3. Klicke auf das Cookie mit dem Namen `dhlr0` (DHL Refresh-Token) oder `dhla0` (DHL Access-Token).\n4. Kopiere den gesamten Wert (beginnt mit `eyJ...`) aus dem Feld „Wert“ (Value) und trage ihn hier ein.",
+        "data": {
+          "refresh_token": "Cookie-Wert (`dhlr0` oder `dhla0`)"
+        }
+      },
+      "account_web": {
+        "title": "DHL Kundenkonto — Web Auth Code",
+        "description": "Gib den Autorisierungscode nach dem DHL Web-Login ein.\n\nSo ermittelst du deinen Code:\n1. Öffne die DHL Login-URL im Browser.\n2. Schließe Anmeldung und 2FA-Bestätigung ab.\n3. Kopiere den Parameter `code` aus der Adresszeile deines Browsers nach der Weiterleitung und trage ihn unten ein.",
+        "data": {
+          "auth_code": "Autorisierungscode"
+        }
+      },
+      "reauth_confirm": {
+        "title": "DHL-Konto erneut authentifizieren",
+        "description": "Dein DHL Session-Token (`dhlr0` oder `dhla0`) ist abgelaufen. Bitte kopiere einen frischen Cookie-Wert von dhl.de (Entwicklertools > Anwendung > Cookies), um die Abfrage fortzusetzen.",
+        "data": {
+          "refresh_token": "Neuer Cookie-Wert (`dhlr0` oder `dhla0`)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Verbindung zur DHL API fehlgeschlagen.",
+      "invalid_auth": "Ungültiger API-Schlüssel (401/403). Bitte überprüfe den Schlüssel im DHL Developer Portal.",
+      "rate_limit": "DHL API Rate-Limit erreicht (429). Bitte später erneut versuchen.",
+      "empty_tracking_numbers": "Bitte gib mindestens eine gültige Sendungsnummer an oder wähle eine Kontoanmeldung.",
+      "empty_token": "Bitte trage den Wert des Cookies `dhlr0` oder `dhla0` von dhl.de ein.",
+      "empty_code": "Bitte gib einen gültigen Autorisierungscode aus der Weiterleitungs-URL an."
+    },
+    "abort": {
+      "already_configured": "Dieses DHL-Konto ist bereits eingerichtet.",
+      "reauth_successful": "Erneute Authentifizierung war erfolgreich."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "DHL Optionen",
+        "description": "Passe deine Konto-Verbindung, Sendungsnummern oder das Aktualisierungsintervall an.\n\nTipp: Für eine Konto-Anbindung trage den Wert des Cookies `dhlr0` (Refresh-Token) oder `dhla0` von dhl.de ein.",
+        "data": {
+          "account_mode": "DHL Kundenkonto-Verbindung",
+          "refresh_token": "Cookie-Wert (`dhlr0` oder `dhla0`)",
+          "auth_code": "Autorisierungscode",
+          "tracking_numbers": "Sendungsnummern (optional bei verbundenem Konto)",
+          "api_key": "DHL Developer API Key (optional)",
+          "recipient_postal_code": "Empfänger-Postleitzahl (optional)",
+          "update_interval": "Aktualisierungsintervall in Minuten"
+        }
+      }
+    },
+    "error": {
+      "empty_tracking_numbers": "Bitte gib mindestens eine gültige Sendungsnummer an oder wähle eine Kontoanmeldung.",
+      "empty_token": "Bitte gib einen gültigen Refresh- oder Session-Token an.",
+      "empty_code": "Bitte gib einen gültigen Autorisierungscode an."
+    }
+  },
+  "issues": {
+    "auth_error": {
+      "title": "DHL Authentifizierungsfehler",
+      "description": "Dein DHL API-Schlüssel ist ungültig oder abgelaufen. Bitte aktualisiere deine Anmeldedaten."
+    },
+    "rate_limit_exceeded": {
+      "title": "DHL Rate Limit erreicht",
+      "description": "Das tägliche Abfragelimit der DHL API wurde erreicht. Abfragen werden zum Schutz pausiert."
+    },
+    "daily_limit_reached": {
+      "title": "Tägliches DHL API Kontingent erschöpft",
+      "description": "Das tägliche Kontingent von 240 Abfragen wurde erreicht, um Sperren zu verhindern. Updates werden morgen automatisch fortgesetzt."
+    }
+  }
+}

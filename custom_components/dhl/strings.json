@@ -1,0 +1,100 @@
+{
+  "entity": {
+    "sensor": {
+      "next_delivery": {
+        "name": "Next delivery"
+      }
+    },
+    "calendar": {
+      "deliveries": {
+        "name": "DHL deliveries"
+      }
+    }
+  },
+  "config": {
+    "step": {
+      "user": {
+        "title": "DHL Shipment Tracking",
+        "description": "Configure DHL parcel tracking. Account connection is completely optional — you can track packages without an account by entering tracking numbers directly.",
+        "data": {
+          "account_mode": "DHL Account Connection (Optional)",
+          "refresh_token": "Cookie Value (`dhlr0` from dhl.de Cookies)",
+          "auth_code": "Authorization Code (optional)",
+          "tracking_numbers": "Tracking numbers (optional if account connected)",
+          "api_key": "DHL Developer API Key (optional)",
+          "recipient_postal_code": "Recipient postal code (optional)",
+          "update_interval": "Update interval in minutes (default: 30)"
+        }
+      },
+      "account_token": {
+        "title": "DHL Account — Session / Refresh Token (Recommended)",
+        "description": "Enter your DHL session/refresh token (`dhlr0` or `dhla0`).\n\nHow to get your token:\n1. Log in to your DHL customer account at dhl.de in your browser.\n2. Open Developer Tools (F12) > Application > Storage > Cookies > `https://www.dhl.de`.\n3. Click on the cookie named `dhlr0` (DHL refresh token) or `dhla0` (DHL access token).\n4. Copy the entire Value string (starts with `eyJ...`) and paste it here.",
+        "data": {
+          "refresh_token": "Cookie Value (`dhlr0` or `dhla0`)"
+        }
+      },
+      "account_web": {
+        "title": "DHL Account — Web Auth Code",
+        "description": "Enter the authorization code obtained from completing the DHL Web login dialog.\n\nHow to obtain your code:\n1. Open the DHL authorization URL in your browser.\n2. Complete login and 2FA verification.\n3. Copy the authorization `code` parameter from the redirected URL in your browser address bar and paste it below.",
+        "data": {
+          "auth_code": "Authorization Code"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Re-authenticate DHL Account",
+        "description": "Your DHL session token (`dhlr0` or `dhla0`) has expired. Please copy a fresh cookie value from dhl.de (DevTools > Application > Cookies) to resume tracking.",
+        "data": {
+          "refresh_token": "New Cookie Value (`dhlr0` or `dhla0`)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect to the DHL API.",
+      "invalid_auth": "Invalid API key (401/403). Please verify your key in the DHL Developer Portal.",
+      "rate_limit": "DHL API rate limit exceeded (429). Please try again later.",
+      "empty_tracking_numbers": "Please provide at least one tracking number or select an account connection option.",
+      "empty_token": "Please provide the cookie value of `dhlr0` or `dhla0` from dhl.de.",
+      "empty_code": "Please provide an authorization code from the redirect URL."
+    },
+    "abort": {
+      "already_configured": "This DHL account is already configured.",
+      "reauth_successful": "Re-authentication was successful."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "DHL Options",
+        "description": "Adjust account connection, tracking numbers, or polling interval.\n\nTip: For account connection, enter the cookie value of `dhlr0` (refresh token) or `dhla0` from dhl.de Cookies (F12).",
+        "data": {
+          "account_mode": "DHL Account Connection",
+          "refresh_token": "Cookie Value (`dhlr0` or `dhla0`)",
+          "auth_code": "Authorization Code",
+          "tracking_numbers": "Tracking numbers (optional if account connected)",
+          "api_key": "DHL Developer API Key (optional)",
+          "recipient_postal_code": "Recipient postal code (optional)",
+          "update_interval": "Update interval in minutes"
+        }
+      }
+    },
+    "error": {
+      "empty_tracking_numbers": "Please provide at least one tracking number or select an account connection option.",
+      "empty_token": "Please provide a valid refresh or session token.",
+      "empty_code": "Please provide an authorization code."
+    }
+  },
+  "issues": {
+    "auth_error": {
+      "title": "DHL Authentication Error",
+      "description": "Your DHL API key is invalid or has expired. Please update your credentials."
+    },
+    "rate_limit_exceeded": {
+      "title": "DHL Rate Limit Exceeded",
+      "description": "The DHL API rate limit was reached. Polling is paused to protect your quota."
+    },
+    "daily_limit_reached": {
+      "title": "Daily DHL API Quota Reached",
+      "description": "The daily limit of 240 calls was reached to prevent account bans. Polling will resume tomorrow."
+    }
+  }
+}

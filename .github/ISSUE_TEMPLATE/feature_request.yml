@@ -1,0 +1,51 @@
+name: Feature Request
+description: Suggest an idea or enhancement for the DHL Tracking integration
+title: '[Feature]: '
+labels: ['enhancement', 'triage']
+assignees:
+  - FaserF
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Before submitting
+        - 🔍 Search existing feature requests to avoid duplicates
+        - 🔗 View your integration in Home Assistant: [![Open your Home Assistant instance and show the dhl integration.](https://my.home-assistant.io/badges/integration.svg)](https://my.home-assistant.io/redirect/integration/?domain=dhl)
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Description
+      description: Is your feature request related to a problem or limitation?
+      placeholder: "I'm always frustrated when..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: A clear and concise description of what you want to happen.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: feature_area
+    attributes:
+      label: Feature Area
+      options:
+        - Sensor & Parcel Data
+        - Calendar Entity
+        - Config & Options Flow
+        - Rate Limiting / Anti-Ban
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Add any other context, screenshots, or examples here.
+    validations:
+      required: false
