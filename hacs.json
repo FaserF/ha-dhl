@@ -2,5 +2,6 @@
   "name": "DHL Tracking",
   "render_readme": true,
   "zip_release": true,
-  "filename": "dhl.zip"
+  "filename": "dhl.zip",
+  "country": "DE"
 }

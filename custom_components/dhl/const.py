@@ -14,6 +14,8 @@ CONF_RECIPIENT_POSTAL_CODE = "recipient_postal_code"
 CONF_ACCOUNT_MODE = "account_mode"
 CONF_REFRESH_TOKEN = "refresh_token"
 CONF_AUTH_CODE = "auth_code"
+CONF_AUTO_PRUNE_DELIVERED = "auto_prune_delivered"
+CONF_AUTO_PRUNE_DAYS = "auto_prune_days"
 
 # Account Mode options
 ACCOUNT_MODE_NONE = "none"
@@ -24,6 +26,10 @@ ACCOUNT_MODE_WEB = "web"
 DEFAULT_UPDATE_INTERVAL = 30  # minutes
 MIN_UPDATE_INTERVAL = 10  # minutes
 MAX_UPDATE_INTERVAL = 1440  # 24 hours
+DEFAULT_AUTO_PRUNE_DELIVERED = False
+DEFAULT_AUTO_PRUNE_DAYS = 14
+MIN_AUTO_PRUNE_DAYS = 1
+MAX_AUTO_PRUNE_DAYS = 365
 
 # API Configuration
 DHL_PUBLIC_API_URL = "https://www.dhl.de/int-verfolgen/data/search"

@@ -28,6 +28,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     _LOGGER.debug("Setting up DHL Tracking entry: %s", entry.entry_id)
     hass.data.setdefault(DOMAIN, {})
 
+    # Normalize legacy entry title if it contains shipment counts
+    if "(" in entry.title and "shipment" in entry.title:
+        clean_title = entry.title.split("(")[0].strip() or "DHL Tracking"
+        hass.config_entries.async_update_entry(entry, title=clean_title)
+
     coordinator = DHLDataUpdateCoordinator(hass, entry)
 
     # Restore cached shipment data to survive reboots without hitting the API

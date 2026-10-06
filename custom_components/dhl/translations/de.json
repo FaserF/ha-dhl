@@ -15,34 +15,36 @@
     "step": {
       "user": {
         "title": "DHL Sendungsverfolgung",
-        "description": "Richte die DHL Paketverfolgung ein. Eine Kontoanmeldung ist vollkommen optional — du kannst Pakete ohne Konto direkt über deine Sendungsnummern tracken.",
+        "description": "Richte die DHL Paketverfolgung direkt über deine Sendungsnummern ein (Empfohlen).\n\n⚠️ Hinweis zur DHL Konto-Verbindung: DHL bietet KEINE automatische Übertragung von Sendungen aus deinem Konto an. Cookie-Token laufen schnell ab, sind umständlich zu ermitteln und bieten kaum Mehrwert. Manuelles Tracking wird dringend empfohlen.",
         "data": {
-          "account_mode": "DHL Kundenkonto-Verbindung (Optional)",
+          "account_mode": "DHL Kundenkonto-Verbindung (Optional / Nicht empfohlen)",
           "refresh_token": "Cookie-Wert (`dhlr0` aus dhl.de Cookies)",
           "auth_code": "Autorisierungscode (optional)",
-          "tracking_numbers": "Sendungsnummern (optional bei verbundenem Konto)",
+          "tracking_numbers": "Sendungsnummern (durch Komma getrennt oder Liste)",
           "api_key": "DHL Developer API Key (optional)",
           "recipient_postal_code": "Empfänger-Postleitzahl (optional)",
-          "update_interval": "Aktualisierungsintervall in Minuten (Standard: 30)"
+          "update_interval": "Aktualisierungsintervall in Minuten (Standard: 30)",
+          "auto_prune_delivered": "Zugestellte Sendungen automatisch nach X Tagen aus Konfiguration löschen",
+          "auto_prune_days": "Tage nach Zustellung bis zur automatischen Löschung (Standard: 14)"
         }
       },
       "account_token": {
-        "title": "DHL Kundenkonto — Session / Refresh Token (Empfohlen)",
-        "description": "Gib deinen DHL Session- oder Refresh-Token (`dhlr0` oder `dhla0`) ein.\n\nSo ermittelst du deinen Token:\n1. Melde dich im Browser in deinem DHL Kundenkonto auf dhl.de an.\n2. Öffne die Entwicklertools (F12) > Anwendung (Application) > Speicher (Storage) > Cookies > `https://www.dhl.de`.\n3. Klicke auf das Cookie mit dem Namen `dhlr0` (DHL Refresh-Token) oder `dhla0` (DHL Access-Token).\n4. Kopiere den gesamten Wert (beginnt mit `eyJ...`) aus dem Feld „Wert“ (Value) und trage ihn hier ein.",
+        "title": "DHL Kundenkonto — Session / Refresh Token (Experimentell)",
+        "description": "⚠️ Hinweis: Die Verknüpfung überträgt KEINE Sendungen automatisch aus deinem DHL-Konto. Token laufen schnell ab und müssen manuell erneuert werden. Manuelle Sendungsverfolgung wird empfohlen.\n\nFalls du es dennoch nutzen möchtest:\n1. Melde dich im Browser in deinem DHL Kundenkonto auf dhl.de an.\n2. Öffne die Entwicklertools (F12) > Anwendung (Application) > Speicher (Storage) > Cookies > `https://www.dhl.de`.\n3. Klicke auf das Cookie `dhlr0` (Refresh-Token) oder `dhla0` (Access-Token).\n4. Kopiere den gesamten Wert (beginnt mit `eyJ...`) und trage ihn hier ein.",
         "data": {
           "refresh_token": "Cookie-Wert (`dhlr0` oder `dhla0`)"
         }
       },
       "account_web": {
-        "title": "DHL Kundenkonto — Web Auth Code",
-        "description": "Gib den Autorisierungscode nach dem DHL Web-Login ein.\n\nSo ermittelst du deinen Code:\n1. Öffne die DHL Login-URL im Browser.\n2. Schließe Anmeldung und 2FA-Bestätigung ab.\n3. Kopiere den Parameter `code` aus der Adresszeile deines Browsers nach der Weiterleitung und trage ihn unten ein.",
+        "title": "DHL Kundenkonto — Web Auth Code (Experimentell)",
+        "description": "⚠️ Hinweis: Eine Konto-Anbindung überträgt KEINE Sendungen automatisch. Die manuelle Eingabe von Sendungsnummern wird empfohlen.\n\nSo ermittelst du deinen Code:\n1. Öffne die DHL Login-URL im Browser.\n2. Schließe Anmeldung und 2FA-Bestätigung ab.\n3. Kopiere den Parameter `code` aus der Adresszeile deines Browsers nach der Weiterleitung und trage ihn unten ein.",
         "data": {
           "auth_code": "Autorisierungscode"
         }
       },
       "reauth_confirm": {
         "title": "DHL-Konto erneut authentifizieren",
-        "description": "Dein DHL Session-Token (`dhlr0` oder `dhla0`) ist abgelaufen. Bitte kopiere einen frischen Cookie-Wert von dhl.de (Entwicklertools > Anwendung > Cookies), um die Abfrage fortzusetzen.",
+        "description": "Dein DHL Session-Token (`dhlr0` oder `dhla0`) ist wie bei DHL üblich abgelaufen. Bitte kopiere einen frischen Cookie-Wert von dhl.de (Entwicklertools > Anwendung > Cookies), oder wechsle in den Optionen zu 'Ohne Kontoanmeldung'.",
         "data": {
           "refresh_token": "Neuer Cookie-Wert (`dhlr0` oder `dhla0`)"
         }
@@ -65,15 +67,17 @@
     "step": {
       "init": {
         "title": "DHL Optionen",
-        "description": "Passe deine Konto-Verbindung, Sendungsnummern oder das Aktualisierungsintervall an.\n\nTipp: Für eine Konto-Anbindung trage den Wert des Cookies `dhlr0` (Refresh-Token) oder `dhla0` von dhl.de ein.",
+        "description": "Passe Sendungsnummern, Aktualisierungsintervall oder Konto-Verbindung an.\n\n⚠️ Hinweis: Ein DHL-Konto-Login überträgt KEINE Sendungen automatisch und Token verfallen regelmäßig. Wir empfehlen das manuelle Tracking über Sendungsnummern.",
         "data": {
-          "account_mode": "DHL Kundenkonto-Verbindung",
+          "account_mode": "DHL Kundenkonto-Verbindung (Optional / Nicht empfohlen)",
           "refresh_token": "Cookie-Wert (`dhlr0` oder `dhla0`)",
           "auth_code": "Autorisierungscode",
-          "tracking_numbers": "Sendungsnummern (optional bei verbundenem Konto)",
+          "tracking_numbers": "Sendungsnummern (durch Komma getrennt oder Liste)",
           "api_key": "DHL Developer API Key (optional)",
           "recipient_postal_code": "Empfänger-Postleitzahl (optional)",
-          "update_interval": "Aktualisierungsintervall in Minuten"
+          "update_interval": "Aktualisierungsintervall in Minuten",
+          "auto_prune_delivered": "Zugestellte Sendungen automatisch nach X Tagen aus Konfiguration löschen",
+          "auto_prune_days": "Tage nach Zustellung bis zur automatischen Löschung"
         }
       }
     },

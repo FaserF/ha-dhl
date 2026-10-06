@@ -19,13 +19,19 @@ from .const import (
     CONF_ACCOUNT_MODE,
     CONF_API_KEY,
     CONF_AUTH_CODE,
+    CONF_AUTO_PRUNE_DAYS,
+    CONF_AUTO_PRUNE_DELIVERED,
     CONF_RECIPIENT_POSTAL_CODE,
     CONF_REFRESH_TOKEN,
     CONF_TRACKING_NUMBERS,
     CONF_UPDATE_INTERVAL,
+    DEFAULT_AUTO_PRUNE_DAYS,
+    DEFAULT_AUTO_PRUNE_DELIVERED,
     DEFAULT_UPDATE_INTERVAL,
     DOMAIN,
+    MAX_AUTO_PRUNE_DAYS,
     MAX_UPDATE_INTERVAL,
+    MIN_AUTO_PRUNE_DAYS,
     MIN_UPDATE_INTERVAL,
 )
 
@@ -131,6 +137,12 @@ class DHLConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                         CONF_UPDATE_INTERVAL: user_input.get(
                             CONF_UPDATE_INTERVAL, DEFAULT_UPDATE_INTERVAL
                         ),
+                        CONF_AUTO_PRUNE_DELIVERED: user_input.get(
+                            CONF_AUTO_PRUNE_DELIVERED, DEFAULT_AUTO_PRUNE_DELIVERED
+                        ),
+                        CONF_AUTO_PRUNE_DAYS: user_input.get(
+                            CONF_AUTO_PRUNE_DAYS, DEFAULT_AUTO_PRUNE_DAYS
+                        ),
                         "account_claims": claims,
                         "post_number": post_number,
                     }
@@ -142,13 +154,13 @@ class DHLConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                             else f"account_{refresh_token[:10]}"
                         )
                         title = (
-                            f"DHL Account {post_number} ({len(tracking_list)} shipments)"
+                            f"DHL Account ({post_number})"
                             if post_number
-                            else f"DHL Account ({len(tracking_list)} shipments)"
+                            else "DHL Account"
                         )
                     elif account_mode == ACCOUNT_MODE_WEB and auth_code:
                         unique_id = f"web_{auth_code[:10]}"
-                        title = f"DHL Account Web ({len(tracking_list)} shipments)"
+                        title = "DHL Account (Web)"
                     else:
                         unique_id = (
                             api_key[:12]
@@ -159,7 +171,7 @@ class DHLConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                                 else "public_dhl"
                             )
                         )
-                        title = f"DHL ({len(tracking_list)} shipments)"
+                        title = "DHL Tracking"
 
                     await self.async_set_unique_id(unique_id)
                     self._abort_if_unique_id_configured()
@@ -178,15 +190,15 @@ class DHLConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                         options=[
                             {
                                 "value": ACCOUNT_MODE_NONE,
-                                "label": "No account login (Tracking numbers only)",
+                                "label": "No account login — Manual tracking (Recommended)",
                             },
                             {
                                 "value": ACCOUNT_MODE_TOKEN,
-                                "label": "Session / Refresh Token (Recommended)",
+                                "label": "Session / Refresh Token (Experimental / Not Recommended)",
                             },
                             {
                                 "value": ACCOUNT_MODE_WEB,
-                                "label": "Web Auth / Authorization Code",
+                                "label": "Web Auth / Authorization Code (Experimental)",
                             },
                         ],
                         mode=selector.SelectSelectorMode.DROPDOWN,
@@ -210,6 +222,15 @@ class DHLConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 ): vol.All(
                     vol.Coerce(int),
                     vol.Range(min=MIN_UPDATE_INTERVAL, max=MAX_UPDATE_INTERVAL),
+                ),
+                vol.Optional(
+                    CONF_AUTO_PRUNE_DELIVERED, default=DEFAULT_AUTO_PRUNE_DELIVERED
+                ): selector.BooleanSelector(),
+                vol.Optional(
+                    CONF_AUTO_PRUNE_DAYS, default=DEFAULT_AUTO_PRUNE_DAYS
+                ): vol.All(
+                    vol.Coerce(int),
+                    vol.Range(min=MIN_AUTO_PRUNE_DAYS, max=MAX_AUTO_PRUNE_DAYS),
                 ),
             }
         )
@@ -247,7 +268,6 @@ class DHLConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     self._user_input_data["account_claims"] = claims
                     if post_number:
                         self._user_input_data["post_number"] = post_number
-                    tracking_list = self._user_input_data.get(CONF_TRACKING_NUMBERS, [])
                     unique_id = (
                         f"account_{post_number}"
                         if post_number
@@ -257,9 +277,7 @@ class DHLConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     self._abort_if_unique_id_configured()
 
                     title = (
-                        f"DHL Account {post_number} ({len(tracking_list)} shipments)"
-                        if post_number
-                        else f"DHL Account ({len(tracking_list)} shipments)"
+                        f"DHL Account ({post_number})" if post_number else "DHL Account"
                     )
                     return self.async_create_entry(
                         title=title,
@@ -290,13 +308,12 @@ class DHLConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 errors[CONF_AUTH_CODE] = "empty_code"
             else:
                 self._user_input_data[CONF_AUTH_CODE] = code
-                tracking_list = self._user_input_data.get(CONF_TRACKING_NUMBERS, [])
                 unique_id = f"web_{code[:10]}"
                 await self.async_set_unique_id(unique_id)
                 self._abort_if_unique_id_configured()
 
                 return self.async_create_entry(
-                    title=f"DHL Account Web ({len(tracking_list)} shipments)",
+                    title="DHL Account (Web)",
                     data=self._user_input_data,
                 )
 
@@ -456,6 +473,19 @@ class DHLOptionsFlowHandler(config_entries.OptionsFlow):
                             CONF_UPDATE_INTERVAL: user_input.get(
                                 CONF_UPDATE_INTERVAL, DEFAULT_UPDATE_INTERVAL
                             ),
+                            CONF_AUTO_PRUNE_DELIVERED: user_input.get(
+                                CONF_AUTO_PRUNE_DELIVERED,
+                                current_data.get(
+                                    CONF_AUTO_PRUNE_DELIVERED,
+                                    DEFAULT_AUTO_PRUNE_DELIVERED,
+                                ),
+                            ),
+                            CONF_AUTO_PRUNE_DAYS: user_input.get(
+                                CONF_AUTO_PRUNE_DAYS,
+                                current_data.get(
+                                    CONF_AUTO_PRUNE_DAYS, DEFAULT_AUTO_PRUNE_DAYS
+                                ),
+                            ),
                             "account_claims": merged_claims,
                             "post_number": post_number,
                         },
@@ -475,15 +505,15 @@ class DHLOptionsFlowHandler(config_entries.OptionsFlow):
                         options=[
                             {
                                 "value": ACCOUNT_MODE_NONE,
-                                "label": "No account login (Tracking numbers only)",
+                                "label": "No account login — Manual tracking (Recommended)",
                             },
                             {
                                 "value": ACCOUNT_MODE_TOKEN,
-                                "label": "Session / Refresh Token (Recommended)",
+                                "label": "Session / Refresh Token (Experimental / Not Recommended)",
                             },
                             {
                                 "value": ACCOUNT_MODE_WEB,
-                                "label": "Web Auth / Authorization Code",
+                                "label": "Web Auth / Authorization Code (Experimental)",
                             },
                         ],
                         mode=selector.SelectSelectorMode.DROPDOWN,
@@ -523,6 +553,21 @@ class DHLOptionsFlowHandler(config_entries.OptionsFlow):
                 ): vol.All(
                     vol.Coerce(int),
                     vol.Range(min=MIN_UPDATE_INTERVAL, max=MAX_UPDATE_INTERVAL),
+                ),
+                vol.Optional(
+                    CONF_AUTO_PRUNE_DELIVERED,
+                    default=current_data.get(
+                        CONF_AUTO_PRUNE_DELIVERED, DEFAULT_AUTO_PRUNE_DELIVERED
+                    ),
+                ): selector.BooleanSelector(),
+                vol.Optional(
+                    CONF_AUTO_PRUNE_DAYS,
+                    default=current_data.get(
+                        CONF_AUTO_PRUNE_DAYS, DEFAULT_AUTO_PRUNE_DAYS
+                    ),
+                ): vol.All(
+                    vol.Coerce(int),
+                    vol.Range(min=MIN_AUTO_PRUNE_DAYS, max=MAX_AUTO_PRUNE_DAYS),
                 ),
             }
         )

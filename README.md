@@ -27,8 +27,9 @@ A robust Home Assistant integration for tracking DHL parcels with **zero configu
   - Comprehensive attributes: tracking number, status code, location, weight, product description, origin, destination city, milestone history, and your **Postnummer** (when account is connected).
 - **🚚 Individual Parcel Sensors (`sensor.dhl_parcel_<number>`)**:
   - Dedicated sensor for every configured tracking number with full real-time event attributes.
-- **⚡ Intuitive Configuration**:
+- **⚡ Intuitive Configuration & Auto-Pruning**:
   - Enter tracking numbers directly without an account, or link your DHL session token for authenticated tracking and Postnummer integration.
+  - **🧹 Auto-Prune Delivered Shipments**: Automatically purge delivered shipments from configuration and sensors after a configurable number of days (default: 14 days, can be enabled/disabled at any time).
 - **🚫 NO Fragile HTML Scraping**:
   - Uses official JSON endpoints (public `dhl.de` REST API or the developer portal API).
 

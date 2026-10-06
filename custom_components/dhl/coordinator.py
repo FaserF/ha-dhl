@@ -30,11 +30,15 @@ from .api import DHLAPIClient, DHLAuthError, DHLRateLimitError, decode_jwt_paylo
 from .const import (
     CONF_API_KEY,
     CONF_AUTH_CODE,
+    CONF_AUTO_PRUNE_DAYS,
+    CONF_AUTO_PRUNE_DELIVERED,
     CONF_RECIPIENT_POSTAL_CODE,
     CONF_REFRESH_TOKEN,
     CONF_TRACKING_NUMBERS,
     CONF_UPDATE_INTERVAL,
     DAILY_CALL_LIMIT,
+    DEFAULT_AUTO_PRUNE_DAYS,
+    DEFAULT_AUTO_PRUNE_DELIVERED,
     DEFAULT_MAX_JITTER,
     DEFAULT_MIN_JITTER,
     DEFAULT_UPDATE_INTERVAL,
@@ -102,6 +106,16 @@ class DHLDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             auth_code=self.auth_code,
         )
 
+        self.auto_prune_delivered: bool = bool(
+            config.get(CONF_AUTO_PRUNE_DELIVERED, DEFAULT_AUTO_PRUNE_DELIVERED)
+        )
+        self.auto_prune_days: int = int(
+            config.get(CONF_AUTO_PRUNE_DAYS, DEFAULT_AUTO_PRUNE_DAYS)
+        )
+
+        # Delivered timestamps per tracking number for auto-pruning
+        self.delivered_dates: dict[str, str] = {}
+
         # Anti-ban / Rate-limit state
         self._backoff_until: datetime | None = None
         self._consecutive_failures: int = 0
@@ -117,7 +131,7 @@ class DHLDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             hass,
             _LOGGER,
             config_entry=entry,
-            name=f"DHL Tracking ({len(self.tracking_numbers)} parcels)",
+            name="DHL Tracking",
             update_interval=timedelta(minutes=interval_minutes),
         )
 
@@ -146,9 +160,15 @@ class DHLDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             self._daily_calls_reset_date = cache.get(
                 "daily_calls_reset_date", dt_util.now().strftime("%Y-%m-%d")
             )
+            raw_delivered = cache.get("delivered_dates")
+            if isinstance(raw_delivered, dict):
+                self.delivered_dates = {
+                    str(k): str(v) for k, v in raw_delivered.items()
+                }
             _LOGGER.debug(
-                "Restored %d DHL shipment records from persistent storage",
+                "Restored %d DHL shipment records and %d delivery dates from persistent storage",
                 len(self.data),
+                len(self.delivered_dates),
             )
 
     def _check_daily_quota(self) -> bool:
@@ -237,6 +257,11 @@ class DHLDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                     self._daily_calls_count += 1
                     if shipment:
                         updated_shipments[clean_nr] = shipment
+                        if shipment.get("status", {}).get("statusCode") == "delivered":
+                            if clean_nr not in self.delivered_dates:
+                                self.delivered_dates[clean_nr] = (
+                                    dt_util.now().isoformat()
+                                )
                     else:
                         updated_shipments[clean_nr] = {
                             "id": clean_nr,
@@ -290,6 +315,67 @@ class DHLDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                         f"Error fetching DHL shipment {clean_nr}: {err}"
                     ) from err
 
+            # Check for delivered parcels and register delivery date if already marked delivered
+            for nr in self.tracking_numbers:
+                c_nr = nr.strip()
+                if (
+                    c_nr in updated_shipments
+                    and updated_shipments[c_nr].get("status", {}).get("statusCode")
+                    == "delivered"
+                    and c_nr not in self.delivered_dates
+                ):
+                    status_ts = (
+                        updated_shipments[c_nr].get("status", {}).get("timestamp")
+                    )
+                    parsed_ts = dt_util.parse_datetime(status_ts) if status_ts else None
+                    self.delivered_dates[c_nr] = (
+                        parsed_ts.isoformat()
+                        if parsed_ts
+                        else dt_util.now().isoformat()
+                    )
+
+            # Auto-prune delivered shipments older than auto_prune_days
+            if self.auto_prune_delivered and self.auto_prune_days > 0:
+                cutoff = dt_util.now() - timedelta(days=self.auto_prune_days)
+                to_remove: list[str] = []
+
+                for nr in list(self.tracking_numbers):
+                    c_nr = nr.strip()
+                    deliv_str = self.delivered_dates.get(c_nr)
+                    if not deliv_str:
+                        continue
+                    deliv_dt = dt_util.parse_datetime(deliv_str)
+                    if deliv_dt and deliv_dt <= cutoff:
+                        to_remove.append(c_nr)
+
+                if to_remove:
+                    _LOGGER.info(
+                        "Auto-pruning %d delivered DHL shipments older than %d days: %s",
+                        len(to_remove),
+                        self.auto_prune_days,
+                        to_remove,
+                    )
+                    new_tracking = [
+                        n for n in self.tracking_numbers if n.strip() not in to_remove
+                    ]
+                    self.tracking_numbers = new_tracking
+                    for r_nr in to_remove:
+                        updated_shipments.pop(r_nr, None)
+                        self.delivered_dates.pop(r_nr, None)
+
+                    # Update config entry asynchronously without triggering immediate reload
+                    new_data = dict(self.config_entry.data)
+                    new_data[CONF_TRACKING_NUMBERS] = new_tracking
+                    new_options = dict(self.config_entry.options)
+                    if CONF_TRACKING_NUMBERS in new_options:
+                        new_options[CONF_TRACKING_NUMBERS] = new_tracking
+
+                    self.hass.config_entries.async_update_entry(
+                        self.config_entry,
+                        data=new_data,
+                        options=new_options,
+                    )
+
         self._last_success = dt_util.now()
         self._consecutive_failures = 0
         self._force_update = False
@@ -303,6 +389,7 @@ class DHLDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 "last_success": self._last_success.isoformat(),
                 "daily_calls_count": self._daily_calls_count,
                 "daily_calls_reset_date": self._daily_calls_reset_date,
+                "delivered_dates": self.delivered_dates,
             }
         )
 

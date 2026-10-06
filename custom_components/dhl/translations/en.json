@@ -15,34 +15,36 @@
     "step": {
       "user": {
         "title": "DHL Shipment Tracking",
-        "description": "Configure DHL parcel tracking. Account connection is completely optional — you can track packages without an account by entering tracking numbers directly.",
+        "description": "Configure DHL parcel tracking by entering your tracking numbers directly (Recommended).\n\n⚠️ Note on DHL Account Connection: DHL does NOT offer automatic shipment import from your account. Cookie tokens are short-lived, complicated to extract, and offer minimal benefit. Manual tracking is strongly recommended.",
         "data": {
-          "account_mode": "DHL Account Connection (Optional)",
+          "account_mode": "DHL Account Connection (Optional / Not Recommended)",
           "refresh_token": "Cookie Value (`dhlr0` from dhl.de Cookies)",
           "auth_code": "Authorization Code (optional)",
-          "tracking_numbers": "Tracking numbers (optional if account connected)",
+          "tracking_numbers": "Tracking numbers (comma-separated or list)",
           "api_key": "DHL Developer API Key (optional)",
           "recipient_postal_code": "Recipient postal code (optional)",
-          "update_interval": "Update interval in minutes (default: 30)"
+          "update_interval": "Update interval in minutes (default: 30)",
+          "auto_prune_delivered": "Automatically delete delivered shipments from configuration",
+          "auto_prune_days": "Days after delivery until automatic deletion (default: 14)"
         }
       },
       "account_token": {
-        "title": "DHL Account — Session / Refresh Token (Recommended)",
-        "description": "Enter your DHL session/refresh token (`dhlr0` or `dhla0`).\n\nHow to get your token:\n1. Log in to your DHL customer account at dhl.de in your browser.\n2. Open Developer Tools (F12) > Application > Storage > Cookies > `https://www.dhl.de`.\n3. Click on the cookie named `dhlr0` (DHL refresh token) or `dhla0` (DHL access token).\n4. Copy the entire Value string (starts with `eyJ...`) and paste it here.",
+        "title": "DHL Account — Session / Refresh Token (Experimental)",
+        "description": "⚠️ Note: Connecting an account does NOT automatically import shipments from DHL. Tokens expire quickly and must be renewed manually. Manual tracking is recommended.\n\nIf you still want to connect:\n1. Log in to your DHL account at dhl.de in your browser.\n2. Open Developer Tools (F12) > Application > Storage > Cookies > `https://www.dhl.de`.\n3. Click on the cookie named `dhlr0` (refresh token) or `dhla0` (access token).\n4. Copy the entire Value string (starts with `eyJ...`) and paste it here.",
         "data": {
           "refresh_token": "Cookie Value (`dhlr0` or `dhla0`)"
         }
       },
       "account_web": {
-        "title": "DHL Account — Web Auth Code",
-        "description": "Enter the authorization code obtained from completing the DHL Web login dialog.\n\nHow to obtain your code:\n1. Open the DHL authorization URL in your browser.\n2. Complete login and 2FA verification.\n3. Copy the authorization `code` parameter from the redirected URL in your browser address bar and paste it below.",
+        "title": "DHL Account — Web Auth Code (Experimental)",
+        "description": "⚠️ Note: DHL Account connection does NOT automatically import your shipments. Manual tracking number entry is recommended.\n\nHow to obtain your code:\n1. Open the DHL authorization URL in your browser.\n2. Complete login and 2FA verification.\n3. Copy the authorization `code` parameter from the redirected URL in your browser address bar and paste it below.",
         "data": {
           "auth_code": "Authorization Code"
         }
       },
       "reauth_confirm": {
         "title": "Re-authenticate DHL Account",
-        "description": "Your DHL session token (`dhlr0` or `dhla0`) has expired. Please copy a fresh cookie value from dhl.de (DevTools > Application > Cookies) to resume tracking.",
+        "description": "Your DHL session token (`dhlr0` or `dhla0`) has expired as expected due to DHL token lifetimes. Please copy a fresh cookie value from dhl.de (DevTools > Application > Cookies) to resume, or switch to 'No account login' in integration options.",
         "data": {
           "refresh_token": "New Cookie Value (`dhlr0` or `dhla0`)"
         }
@@ -65,15 +67,17 @@
     "step": {
       "init": {
         "title": "DHL Options",
-        "description": "Adjust account connection, tracking numbers, or polling interval.\n\nTip: For account connection, enter the cookie value of `dhlr0` (refresh token) or `dhla0` from dhl.de Cookies (F12).",
+        "description": "Adjust tracking numbers, update interval, or account connection.\n\n⚠️ Note: DHL Account login does NOT automatically import shipments and tokens expire frequently. We recommend tracking shipments manually via tracking numbers.",
         "data": {
-          "account_mode": "DHL Account Connection",
+          "account_mode": "DHL Account Connection (Optional / Not Recommended)",
           "refresh_token": "Cookie Value (`dhlr0` or `dhla0`)",
           "auth_code": "Authorization Code",
-          "tracking_numbers": "Tracking numbers (optional if account connected)",
+          "tracking_numbers": "Tracking numbers (comma-separated or list)",
           "api_key": "DHL Developer API Key (optional)",
           "recipient_postal_code": "Recipient postal code (optional)",
-          "update_interval": "Update interval in minutes"
+          "update_interval": "Update interval in minutes",
+          "auto_prune_delivered": "Automatically delete delivered shipments from configuration",
+          "auto_prune_days": "Days after delivery until automatic deletion"
         }
       }
     },
