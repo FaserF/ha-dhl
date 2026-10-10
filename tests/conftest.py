@@ -36,13 +36,18 @@ except ImportError:
         def __init__(self, coordinator, *args, **kwargs):
             self.coordinator = coordinator
 
+        def __class_getitem__(cls, item):
+            return cls
+
     class SensorEntity:
         """Mock SensorEntity."""
-        pass
+        def __class_getitem__(cls, item):
+            return cls
 
     class CalendarEntity:
         """Mock CalendarEntity."""
-        pass
+        def __class_getitem__(cls, item):
+            return cls
 
     class CalendarEvent:
         """Mock CalendarEvent."""
