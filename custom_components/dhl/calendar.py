@@ -156,7 +156,9 @@ class DHLTrackingCalendar(CoordinatorEntity[DHLDataUpdateCoordinator], CalendarE
                 ts_dt = dt_util.parse_datetime(ts_str) if ts_str else None
                 if ts_dt and ts_dt.tzinfo is None:
                     ts_dt = dt_util.as_local(ts_dt)
-                start = ts_dt or dt_util.now()
+                if not ts_dt:
+                    continue
+                start = ts_dt
                 end = start + timedelta(hours=1)
 
             location = (
@@ -176,5 +178,5 @@ class DHLTrackingCalendar(CoordinatorEntity[DHLDataUpdateCoordinator], CalendarE
                 )
             )
 
-        events.sort(key=lambda x: x.start)
+        events.sort(key=lambda x: self._event_start_dt(x))
         return events
