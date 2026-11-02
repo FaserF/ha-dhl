@@ -1,9 +1,9 @@
-# DHL Tracking (for Home Assistant) 📦
+﻿# DHL Tracking (for Home Assistant) 📦
 
 [![GitHub Release](https://img.shields.io/github/release/FaserF/ha-dhl.svg?style=flat-square)](https://github.com/FaserF/ha-dhl/releases)
 [![Downloads (Current release)](https://img.shields.io/github/downloads/FaserF/ha-dhl/latest/dhl.zip?label=Downloads%20(Current%20release)&style=flat-square)](https://github.com/FaserF/ha-dhl/releases)
 [![License](https://img.shields.io/github/license/FaserF/ha-dhl.svg?style=flat-square)](LICENSE)
-[![hacs](https://img.shields.io/badge/HACS-custom-orange.svg?style=flat-square)](https://hacs.xyz)
+[![Home Assistant Marketplace](https://img.shields.io/badge/Home_Assistant-Marketplace-41BDF5.svg?style=flat-square&logo=homeassistant&logoColor=white)](https://www.home-assistant.io)
 [![CI Orchestrator](https://github.com/FaserF/ha-dhl/actions/workflows/ci-orchestrator.yml/badge.svg)](https://github.com/FaserF/ha-dhl/actions/workflows/ci-orchestrator.yml)
 
 A robust Home Assistant integration for tracking DHL parcels with **zero configuration required by default** (no API key needed for DHL Germany), plus optional support for the official global DHL Developer Portal API.
@@ -133,15 +133,15 @@ To prevent rate limits and avoid blocks across both public and official endpoint
 
 | Device / Service | Integration Use Case | Link |
 | :--- | :--- | :--- |
-| **Home Assistant Green & Offizielle Smart-Home-Hardware** | Empfohlene Hardware-Basis für lokale Home Assistant Integrationen | [Offizielle Geräte-Seite →](https://fabiseitz.de/go/ha-hardware) |
-| **Home Assistant Connect ZBT-1 (Zigbee / Thread)** | Lokales Zigbee2MQTT, ZHA & Matter-over-Thread Funknetz | [Offizielle Geräte-Seite →](https://fabiseitz.de/go/ha-zigbee) |
+| **Home Assistant Green & Official Hardware** | Recommended hardware foundation for local Home Assistant integrations | [Official Device Page →](https://fabiseitz.de/go/ha-hardware) |
+| **Home Assistant Connect ZBT-1 (Zigbee / Thread)** | Local Zigbee2MQTT, ZHA & Matter-over-Thread wireless mesh | [Official Device Page →](https://fabiseitz.de/go/ha-zigbee) |
 
 
 ---
 
 ## 📦 Installation
 
-### HACS (Recommended)
+### Home Assistant Marketplace (Recommended)
 
 1. Open **HACS** in Home Assistant.
 2. Click the three dots in the top right corner and select **Custom repositories**.
