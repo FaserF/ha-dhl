@@ -12,19 +12,26 @@ except ImportError:
     ha = sys.modules.setdefault("homeassistant", MagicMock())
     ha_comp = sys.modules.setdefault("homeassistant.components", MagicMock())
     ha_sensor = sys.modules.setdefault("homeassistant.components.sensor", MagicMock())
-    ha_calendar = sys.modules.setdefault("homeassistant.components.calendar", MagicMock())
+    ha_calendar = sys.modules.setdefault(
+        "homeassistant.components.calendar", MagicMock()
+    )
     ha_cfg = sys.modules.setdefault("homeassistant.config_entries", MagicMock())
     ha_core = sys.modules.setdefault("homeassistant.core", MagicMock())
     ha_exc = sys.modules.setdefault("homeassistant.exceptions", MagicMock())
     ha_helpers = sys.modules.setdefault("homeassistant.helpers", MagicMock())
-    ha_dev_reg = sys.modules.setdefault("homeassistant.helpers.device_registry", MagicMock())
+    ha_dev_reg = sys.modules.setdefault(
+        "homeassistant.helpers.device_registry", MagicMock()
+    )
     ha_ep = sys.modules.setdefault("homeassistant.helpers.entity_platform", MagicMock())
-    ha_uc = sys.modules.setdefault("homeassistant.helpers.update_coordinator", MagicMock())
+    ha_uc = sys.modules.setdefault(
+        "homeassistant.helpers.update_coordinator", MagicMock()
+    )
     ha_util = sys.modules.setdefault("homeassistant.util", MagicMock())
     ha_dt = sys.modules.setdefault("homeassistant.util.dt", MagicMock())
 
     class DeviceInfo(dict):
         """Mock DeviceInfo."""
+
         def __init__(self, **kwargs):
             super().__init__(**kwargs)
 
@@ -33,6 +40,7 @@ except ImportError:
 
     class CoordinatorEntity:
         """Mock CoordinatorEntity."""
+
         def __init__(self, coordinator, *args, **kwargs):
             self.coordinator = coordinator
 
@@ -41,17 +49,28 @@ except ImportError:
 
     class SensorEntity:
         """Mock SensorEntity."""
+
         def __class_getitem__(cls, item):
             return cls
 
     class CalendarEntity:
         """Mock CalendarEntity."""
+
         def __class_getitem__(cls, item):
             return cls
 
     class CalendarEvent:
         """Mock CalendarEvent."""
-        def __init__(self, summary=None, start=None, end=None, description=None, location=None, **kwargs):
+
+        def __init__(
+            self,
+            summary=None,
+            start=None,
+            end=None,
+            description=None,
+            location=None,
+            **kwargs,
+        ):
             self.summary = summary
             self.start = start
             self.end = end
