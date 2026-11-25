@@ -30,7 +30,7 @@
       },
       "account_token": {
         "title": "DHL Kundenkonto — Session / Refresh Token (Experimentell)",
-        "description": "⚠️ Hinweis: Die Verknüpfung überträgt KEINE Sendungen automatisch aus deinem DHL-Konto. Token laufen schnell ab und müssen manuell erneuert werden. Manuelle Sendungsverfolgung wird empfohlen.\n\nFalls du es dennoch nutzen möchtest:\n1. Melde dich im Browser in deinem DHL Kundenkonto auf dhl.de an.\n2. Öffne die Entwicklertools (F12) > Anwendung (Application) > Speicher (Storage) > Cookies > `https://www.dhl.de`.\n3. Klicke auf das Cookie `dhlr0` (Refresh-Token) oder `dhla0` (Access-Token).\n4. Kopiere den gesamten Wert (beginnt mit `eyJ...`) und trage ihn hier ein.",
+        "description": "⚠️ Hinweis: Die Verknüpfung überträgt KEINE Sendungen automatisch aus deinem DHL-Konto. Token laufen schnell ab und müssen manuell erneuert werden. Manuelle Sendungsverfolgung wird empfohlen.\n\nFalls du es dennoch nutzen möchtest:\n1. Melde dich im Browser in deinem DHL Kundenkonto auf dhl.de an.\n2. Öffne die Entwicklertools (F12) > Anwendung (Application) > Speicher (Storage) > Cookies > `www.dhl.de`.\n3. Klicke auf das Cookie `dhlr0` (Refresh-Token) oder `dhla0` (Access-Token).\n4. Kopiere den gesamten Wert (beginnt mit `eyJ...`) und trage ihn hier ein.",
         "data": {
           "refresh_token": "Cookie-Wert (`dhlr0` oder `dhla0`)"
         }

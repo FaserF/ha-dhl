@@ -30,7 +30,7 @@
       },
       "account_token": {
         "title": "DHL Account — Session / Refresh Token (Experimental)",
-        "description": "⚠️ Note: Connecting an account does NOT automatically import shipments from DHL. Tokens expire quickly and must be renewed manually. Manual tracking is recommended.\n\nIf you still want to connect:\n1. Log in to your DHL account at dhl.de in your browser.\n2. Open Developer Tools (F12) > Application > Storage > Cookies > `https://www.dhl.de`.\n3. Click on the cookie named `dhlr0` (refresh token) or `dhla0` (access token).\n4. Copy the entire Value string (starts with `eyJ...`) and paste it here.",
+        "description": "⚠️ Note: Connecting an account does NOT automatically import shipments from DHL. Tokens expire quickly and must be renewed manually. Manual tracking is recommended.\n\nIf you still want to connect:\n1. Log in to your DHL account at dhl.de in your browser.\n2. Open Developer Tools (F12) > Application > Storage > Cookies > `www.dhl.de`.\n3. Click on the cookie named `dhlr0` (refresh token) or `dhla0` (access token).\n4. Copy the entire Value string (starts with `eyJ...`) and paste it here.",
         "data": {
           "refresh_token": "Cookie Value (`dhlr0` or `dhla0`)"
         }

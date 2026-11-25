@@ -153,7 +153,7 @@ class DHLDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             if last_success_str:
                 try:
                     self._last_success = dt_util.parse_datetime(last_success_str)
-                except (ValueError, TypeError):
+                except ValueError, TypeError:
                     self._last_success = None
 
             self._daily_calls_count = cache.get("daily_calls_count", 0)
